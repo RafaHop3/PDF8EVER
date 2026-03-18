@@ -4,8 +4,8 @@ Este é o repositório do **PDF8EVER**, uma ferramenta ultra-eficiente para comp
 
 ## Estrutura do Projeto
 
+- `/`: Interface Web estática (Frontend).
 - `/backend`: API FastAPI (Motor Python) que processa os arquivos.
-- `/frontend`: Interface Web estática que consome a API.
 
 ## Como fazer o Deploy
 
@@ -20,11 +20,10 @@ Este é o repositório do **PDF8EVER**, uma ferramenta ultra-eficiente para comp
 5. Após o deploy, copie a URL gerada (ex: `https://pdf8ever-motor.onrender.com`).
 
 ### 2. Frontend no GitHub Pages
-1. No arquivo `frontend/app.js`, altere a variável `API_URL` para a URL do seu backend no Render (adicionando `/compress` no final).
+1. No arquivo `app.js` (na raiz), altere a variável `API_URL` para a URL do seu backend no Render (adicionando `/compress` no final).
 2. Faça o push dos arquivos para a branch `main`.
-3. Vá em **Settings > Pages** no seu repositório GitHub.
-4. Em "Build and deployment", selecione a branch `main` e a pasta `/frontend` (ou deixe na raiz se mover os arquivos).
-5. Salve e aguarde o link do GitHub Pages ficar online.
+3. O GitHub Pages já foi configurado para a branch `main` e a pasta raiz (`/`).
+4. Seu site ficará online em `https://rafahop3.github.io/PDF8EVER/`.
 
 ## Tecnologias
 - **Backend**: Python, FastAPI, PyMuPDF (fitz).
