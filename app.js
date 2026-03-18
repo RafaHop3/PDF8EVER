@@ -8,9 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultInfo = document.getElementById('result-info');
 
     // --- CONFIGURAÇÃO ---
-    // Após o deploy no Render, substitua a URL abaixo pela sua URL do Render
-    // Exemplo: https://pdf8ever-motor.onrender.com/compress
-    const API_URL = 'https://SUA-URL-AQUI.onrender.com/compress';
+    // URL do motor no Render (Configurado e Live!)
+    const API_URL = 'https://pdf8ever.onrender.com/compress';
+
 
 
     // Click to select file
