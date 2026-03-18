@@ -1,0 +1,99 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const statusArea = document.getElementById('status-area');
+    const resultArea = document.getElementById('result-area');
+    const downloadBtn = document.getElementById('download-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const resultInfo = document.getElementById('result-info');
+
+    // Mudar para a URL do seu backend no Render depois do deploy
+    const API_URL = 'http://localhost:8000/compress';
+
+    // Click to select file
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    // File input change
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleFile(e.target.files[0]);
+        }
+    });
+
+    // Drag and drop events
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const file = dt.files[0];
+        handleFile(file);
+    });
+
+    async function handleFile(file) {
+        if (!file || file.type !== 'application/pdf') {
+            alert('Por favor, envie apenas arquivos PDF.');
+            return;
+        }
+
+        // UI State: Loading
+        dropZone.classList.add('hidden');
+        statusArea.classList.remove('hidden');
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Erro ao processar o arquivo.');
+            }
+
+            // Get the blob from response
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            
+            // Setup Download Button
+            downloadBtn.href = url;
+            downloadBtn.download = `${file.name.split('.')[0]}_esmagado.pdf`;
+
+            // UI State: Success
+            statusArea.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+            resultInfo.innerText = `Seu arquivo "${file.name}" foi esmagado com sucesso!`;
+
+        } catch (error) {
+            console.error('Erro:', error);
+            alert(`Ops! Algo deu errado: ${error.message}`);
+            resetUI();
+        }
+    }
+
+    resetBtn.addEventListener('click', resetUI);
+
+    function resetUI() {
+        dropZone.classList.remove('hidden');
+        statusArea.classList.add('hidden');
+        resultArea.classList.add('hidden');
+        fileInput.value = '';
+    }
+});

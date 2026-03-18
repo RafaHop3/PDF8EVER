@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF8EVER | Esmague seu PDF</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-glow"></div>
+    <main class="container">
+        <header>
+            <h1 class="logo">PDF<span>8</span>EVER</h1>
+            <p class="subtitle">Compressão extrema. Texto nítido. Peso zero.</p>
+        </header>
+
+        <section class="drop-zone" id="drop-zone">
+            <div class="drop-content">
+                <div class="icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 18H17V16H7V18ZM7 14H17V12H7V14ZM7 10H13V8H7V10ZM14 2H6C4.89 2 4 2.9 4 4V20C4 21.1 4.89 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20Z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <p>Arraste seu PDF aqui ou <span>clique para explorar</span></p>
+                <input type="file" id="file-input" accept="application/pdf" hidden>
+            </div>
+        </section>
+
+        <section class="status-area hidden" id="status-area">
+            <div class="loader-container">
+                <div class="spinner"></div>
+                <p id="status-text">Esmagando PDF...</p>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </section>
+
+        <section class="result-area hidden" id="result-area">
+            <div class="success-card">
+                <div class="success-icon">✓</div>
+                <h3>Missão Cumprida!</h3>
+                <p id="result-info">Seu PDF está pronto e muito mais leve.</p>
+                <a id="download-btn" class="btn-primary">Baixar Arquivo Esmagado</a>
+                <button id="reset-btn" class="btn-secondary">Esmagar outro PDF</button>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>&copy; 2026 PDF8EVER - Sem limites de arquivos. 100% Privacy-First.</p>
+        </footer>
+    </main>
+    <script src="app.js"></script>
+</body>
+</html>
