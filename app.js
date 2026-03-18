@@ -7,8 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetBtn = document.getElementById('reset-btn');
     const resultInfo = document.getElementById('result-info');
 
-    // Mudar para a URL do seu backend no Render depois do deploy
-    const API_URL = 'http://localhost:8000/compress';
+    // --- CONFIGURAÇÃO ---
+    // Após o deploy no Render, substitua a URL abaixo pela sua URL do Render
+    // Exemplo: https://pdf8ever-motor.onrender.com/compress
+    const API_URL = 'https://SUA-URL-AQUI.onrender.com/compress';
+
 
     // Click to select file
     dropZone.addEventListener('click', () => fileInput.click());
