@@ -9,15 +9,19 @@ Este é o repositório do **PDF8EVER**, uma ferramenta ultra-eficiente para comp
 
 ## Como fazer o Deploy
 
-### 1. Backend (Motor Python) no Render.com
+### 1. Backend (Motor Python) no Render.com (100% Grátis)
 1. Crie uma conta no [Render](https://render.com).
-2. Conecte seu repositório GitHub.
-3. Escolha "Web Service".
-4. Configure:
-   - **Environment**: Python
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-5. Após o deploy, copie a URL gerada (ex: `https://pdf8ever-motor.onrender.com`).
+2. Clique em **New +** e selecione **Web Service**.
+3. Conecte seu repositório `PDF8EVER`.
+4. Configure os campos exatamente assim:
+   - **Name**: `pdf8ever-motor`
+   - **Runtime**: `Python`
+   - **Build Command**: `pip install -r backend/requirements.txt`
+   - **Start Command**: `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
+   - **Instance Type**: Selecione **Free** (importante!).
+5. Clique em **Create Web Service**. 
+6. Assim que o Render ficar "Live", copie a URL (ex: `https://pdf8ever.onrender.com`).
+
 
 ### 2. Frontend no GitHub Pages
 1. No arquivo `app.js` (na raiz), altere a variável `API_URL` para a URL do seu backend no Render (adicionando `/compress` no final).
