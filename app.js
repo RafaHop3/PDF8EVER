@@ -60,6 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData();
         formData.append('file', file);
 
+        if (API_URL.includes('SUA-URL-AQUI')) {
+            alert('Atenção: Você ainda não configurou a URL do seu motor no Render!\n\nPor favor, faça o deploy no Render.com, copie a URL e cole na linha 11 do arquivo app.js.');
+            resetUI();
+            return;
+        }
+
         try {
             const response = await fetch(API_URL, {
                 method: 'POST',
