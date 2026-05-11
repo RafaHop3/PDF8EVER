@@ -151,4 +151,28 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', init);
     init();
     animate();
+
+    // --- ROBÔ ANTI-SONO (Keep-Alive) ---
+    // Faz um ping silencioso no backend a cada 10 minutos
+    // para impedir que o Render.com coloque o servidor para dormir.
+    const KEEP_ALIVE_URL = 'https://pdf8ever.onrender.com/';
+    const KEEP_ALIVE_INTERVAL_MS = 10 * 60 * 1000; // 10 minutos
+
+    async function keepAlive() {
+        try {
+            const res = await fetch(KEEP_ALIVE_URL, { method: 'GET' });
+            const timestamp = new Date().toLocaleTimeString('pt-BR');
+            if (res.ok) {
+                console.log(`[PDF8EVER Bot] ✅ Motor online — ping em ${timestamp}`);
+            } else {
+                console.warn(`[PDF8EVER Bot] ⚠️ Resposta inesperada (${res.status}) em ${timestamp}`);
+            }
+        } catch (err) {
+            console.error('[PDF8EVER Bot] ❌ Falha no ping — motor pode estar dormindo.', err);
+        }
+        setTimeout(keepAlive, KEEP_ALIVE_INTERVAL_MS);
+    }
+
+    // Inicia imediatamente e depois repete a cada 10 min
+    keepAlive();
 });
