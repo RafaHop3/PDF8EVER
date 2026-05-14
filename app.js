@@ -6,12 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadBtn = document.getElementById('download-btn');
     const resetBtn = document.getElementById('reset-btn');
     const resultInfo = document.getElementById('result-info');
+    const statusText = document.querySelector('#status-area p');
 
     // --- CONFIGURAÇÃO ---
-    // URL do motor no Render (Configurado e Live!)
-    const API_URL = 'https://pdf8ever.onrender.com/compress';
-
-
+    const API_URL = '/compress';
+    const CLOUDINARY_UPLOAD_PRESET = 'pdf8ever_upload'; // Certifique-se de que é UNSIGNED
+    const CLOUDINARY_CLOUD_NAME = 'doxx9wyvw';
 
     // Click to select file
     dropZone.addEventListener('click', () => fileInput.click());
@@ -56,20 +56,37 @@ document.addEventListener('DOMContentLoaded', () => {
         // UI State: Loading
         dropZone.classList.add('hidden');
         statusArea.classList.remove('hidden');
-
-        const formData = new FormData();
-        formData.append('file', file);
-
-        if (API_URL.includes('SUA-URL-AQUI')) {
-            alert('Atenção: Você ainda não configurou a URL do seu motor no Render!\n\nPor favor, faça o deploy no Render.com, copie a URL e cole na linha 11 do arquivo app.js.');
-            resetUI();
-            return;
-        }
+        statusText.innerText = 'Subindo arquivo pesado para a nuvem...';
 
         try {
-            const response = await fetch(API_URL, {
+            // 1. Upload para o Cloudinary (Fura o limite de 4.5MB da Vercel)
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+            const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`, {
                 method: 'POST',
                 body: formData
+            });
+
+            if (!uploadRes.ok) {
+                const err = await uploadRes.json();
+                throw new Error(`Erro no Cloudinary: ${err.error.message}`);
+            }
+
+            const uploadData = await uploadRes.json();
+            const uploadedUrl = uploadData.secure_url;
+
+            statusText.innerText = 'Esmagando PDF... isso pode levar alguns segundos.';
+
+            // 2. Chama o Motor na Vercel passando a URL
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    url: uploadedUrl,
+                    filename: file.name
+                })
             });
 
             if (!response.ok) {
@@ -77,13 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(errorData.detail || 'Erro ao processar o arquivo.');
             }
 
-            // Get the blob from response
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
+            const data = await response.json();
             
             // Setup Download Button
-            downloadBtn.href = url;
-            downloadBtn.download = `${file.name.split('.')[0]}_esmagado.pdf`;
+            downloadBtn.href = data.url;
+            downloadBtn.download = data.filename;
 
             // UI State: Success
             statusArea.classList.add('hidden');
@@ -92,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Erro:', error);
-            alert(`Ops! Algo deu errado: ${error.message}`);
+            alert(`Ops! Algo deu errado: ${error.message}\n\nVerifique se o Upload Preset "${CLOUDINARY_UPLOAD_PRESET}" está configurado como UNSIGNED no Cloudinary.`);
             resetUI();
         }
     }
@@ -151,28 +166,4 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', init);
     init();
     animate();
-
-    // --- ROBÔ ANTI-SONO (Keep-Alive) ---
-    // Faz um ping silencioso no backend a cada 10 minutos
-    // para impedir que o Render.com coloque o servidor para dormir.
-    const KEEP_ALIVE_URL = 'https://pdf8ever.onrender.com/';
-    const KEEP_ALIVE_INTERVAL_MS = 10 * 60 * 1000; // 10 minutos
-
-    async function keepAlive() {
-        try {
-            const res = await fetch(KEEP_ALIVE_URL, { method: 'GET' });
-            const timestamp = new Date().toLocaleTimeString('pt-BR');
-            if (res.ok) {
-                console.log(`[PDF8EVER Bot] ✅ Motor online — ping em ${timestamp}`);
-            } else {
-                console.warn(`[PDF8EVER Bot] ⚠️ Resposta inesperada (${res.status}) em ${timestamp}`);
-            }
-        } catch (err) {
-            console.error('[PDF8EVER Bot] ❌ Falha no ping — motor pode estar dormindo.', err);
-        }
-        setTimeout(keepAlive, KEEP_ALIVE_INTERVAL_MS);
-    }
-
-    // Inicia imediatamente e depois repete a cada 10 min
-    keepAlive();
 });
